@@ -1,0 +1,93 @@
+:root{
+  --bg:#eef2f6; --panel:#1f4e79; --panel-fg:#fff; --card:#fff; --line:#d5dde6;
+  --text:#1b2430; --muted:#6b7785; --accent:#1f6fb5; --danger:#c62828; --sel:#cfe3fb;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;overflow:hidden}
+.hidden{display:none!important}
+
+.screen{display:none;flex-direction:column;height:100vh;height:100dvh;max-width:960px;margin:0 auto;background:var(--card);
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.screen.active{display:flex}
+
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel);color:var(--panel-fg);flex:0 0 auto}
+.title{font-size:18px;font-weight:700}
+
+.btn{appearance:none;border:1px solid #b9c4d0;background:#f7f9fb;color:var(--text);font-size:15px;font-weight:600;
+  padding:9px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.btn:active{transform:translateY(1px);filter:brightness(.95)}
+.topbar .btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{background:#fff;border-color:var(--danger);color:var(--danger)}
+
+.tablewrap{flex:1 1 auto;overflow:auto;-webkit-overflow-scrolling:touch}
+.grid{width:100%;border-collapse:collapse;table-layout:fixed}
+.grid th{position:sticky;top:0;background:#dfe7ef;text-align:left;font-size:13px;color:#33404e;padding:8px 10px;border-bottom:1px solid var(--line);z-index:1}
+.grid td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:middle;line-height:1.3}
+.grid tbody tr{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.grid tbody tr.selected td{background:var(--sel)}
+.c-zaman{width:118px}
+
+.pname{font-weight:700}
+.pname.pasif{font-weight:400;color:#6b7785}
+.pasiftag{margin-left:4px;font-weight:400;color:#6b7785;white-space:nowrap}
+.pasifken{display:block;font-style:italic;color:#6b7785;font-size:13px}
+.fit{display:block;min-width:0;white-space:nowrap;overflow:hidden}
+
+select,input,textarea{font:inherit;color:var(--text)}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+
+.bottombar{display:flex;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);background:#f4f7fa;flex:0 0 auto}
+.bottombar.split{justify-content:space-between}
+
+/* Arama: kelimeler saha içinde etiket olur */
+.searchbox{position:relative;flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px;background:#fff;border:1px solid #b9c4d0;border-radius:8px;padding:4px 34px 4px 6px;min-height:40px;cursor:text}
+.searchbox input{flex:1 1 60px;min-width:60px;border:0;outline:0;padding:4px;width:auto;font-size:15px;background:transparent}
+.searchbox .tags{display:contents}
+#btnAraTemizle{position:absolute;right:4px;top:50%;transform:translateY(-50%)}
+.xbtn{border:0;background:transparent;color:#000;font-size:16px;font-weight:700;line-height:1;width:28px;height:28px;cursor:pointer;border-radius:50%}
+.xbtn:active{background:rgba(0,0,0,.1)}
+.chip{display:inline-flex;align-items:center;gap:2px;background:#e3ebf4;border:1px solid #c3d1e0;border-radius:14px;padding:2px 4px 2px 10px;font-size:14px;color:var(--text)}
+.chip .xbtn{width:22px;height:22px;font-size:13px}
+
+/* Pencereler */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50}
+.dialog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,420px);max-height:90vh;display:flex;flex-direction:column;
+  background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.35);z-index:60;overflow:hidden}
+.dialog.small{width:min(88vw,340px);z-index:80}
+.dlg-title{display:flex;align-items:center;justify-content:space-between;padding:10px 8px 10px 14px;font-weight:700;background:#e8eef5;border-bottom:1px solid var(--line)}
+.dlg-title .xbtn{margin-left:8px}
+.dlg-body{padding:14px;overflow:auto}
+.dlg-body label{display:block;font-size:13px;color:#33404e;font-weight:600;margin-bottom:12px}
+.dlg-body input{display:block;width:100%;margin-top:4px;padding:9px;border:1px solid #b9c4d0;border-radius:8px;font-size:16px;background:#fff}
+.dlg-body label.chk{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--text)}
+.dlg-body label.chk input{display:inline-block;width:20px;height:20px;margin:0}
+.dlg-body p{margin:0;line-height:1.4}
+.dlg-btns{display:flex;justify-content:flex-end;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+.err{color:var(--danger);font-size:13px;min-height:16px}
+.dialog.yellow .dlg-title{background:#fff8c4;border-bottom-color:#e8dc8a}
+
+.popmenu{position:fixed;z-index:70;background:#fff;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);min-width:160px;overflow:hidden}
+.popmenu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:13px 16px;font-size:16px;cursor:pointer}
+.popmenu button+button{border-top:1px solid var(--line)}
+.popmenu button:active{background:#eef3f8}
+#popSil{color:var(--danger);font-weight:600}
+
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;z-index:90;max-width:90vw;text-align:center}
+
+/* Alt panel: solda Excel, ortada Arşiv, sağda Kapat */
+.btngroup{display:flex;gap:6px;flex:0 0 auto;flex-wrap:nowrap}
+.xlbtn{display:inline-flex;align-items:center;gap:6px}
+.xlicon,.kasaicon{width:20px;height:20px;flex:0 0 auto}
+#scrTanim .bottombar .ortabtn{margin:0 auto}
+#btnTanimKapat{flex:0 0 auto}
+
+@media (max-width:480px){
+  .c-zaman{width:92px}
+  .grid td,.grid th{padding-left:7px;padding-right:7px}
+  .btn{padding:8px 10px;font-size:14px}
+  #scrTanim .bottombar .btn{padding:8px 7px;font-size:13px}
+  #scrTanim .xlicon,#scrTanim .kasaicon{width:16px;height:16px}
+  .xlbtn{gap:4px}
+}

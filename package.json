@@ -1,0 +1,21 @@
+{
+  "name": "markalar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Markalar - marka tanımlama",
+  "scripts": {
+    "serve": "npx -y http-server@14.1.1 www -p 5173 -c-1"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.6.10",
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/core": "^7.6.10",
+    "@capacitor/filesystem": "^7.1.9",
+    "@capacitor/share": "^7.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.6.10",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  }
+}
