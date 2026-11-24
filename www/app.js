@@ -92,7 +92,7 @@
 
   function disaAktar() {
     xlsxYukle().then(function (X) {
-      var rows = markalar.slice().sort(adSirala).map(function (m) {
+      var rows = markalar.map(function (m) {
         return { 'Marka İsmi': m.ad, 'Durumu': m.pasif ? 'Pasif' : 'Aktif' };
       });
       var wb = X.utils.book_new();
@@ -228,42 +228,147 @@
     renderTanim();
   }
 
+  // Simgeler tek renk: rengini butondan (currentColor) alır
+  function svgIco(govde) {
+    return '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' + govde + '</svg>';
+  }
+  var ICO = {
+    up: svgIco('<path d="M5 15l7-7 7 7"/>'),
+    down: svgIco('<path d="M5 9l7 7 7-7"/>'),
+    edit: svgIco('<path d="M4 20h4L19 9l-4-4L4 16v4z" stroke-width="2.2"/><path d="M13.5 6.5l4 4" stroke-width="2.2"/>'),
+    x: svgIco('<path d="M6 6l12 12M18 6L6 18"/>')
+  };
+  function ikonBtn(cls, act, html, ipucu, pasifMi) {
+    return '<button type="button" class="' + cls + '" data-act="' + act + '" title="' + ipucu + '" aria-label="' + ipucu + '"' +
+      (pasifMi ? ' disabled' : '') + '>' + html + '</button>';
+  }
+
+  // 'kayit': kayıt sırası (markalar dizisinin kendi sırası, taşınabilir), 'ad': ada göre (taşınamaz)
+  var sira = 'kayit';
+  var seciliId = null;
+  var gorunen = [];   // tabloda o an görünen markalar (sırası ve filtresiyle)
+
+  function renderSira() {
+    document.querySelectorAll('#sirala [data-sira]').forEach(function (b) {
+      var on = b.dataset.sira === sira;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-checked', String(on));
+    });
+  }
+
   function renderTanim() {
     renderChips();
+    renderSira();
     var kel = aramaKelimeleri();
-    var liste = markalar.slice().sort(adSirala).filter(function (m) {
+    var kaynak = sira === 'ad' ? markalar.slice().sort(adSirala) : markalar.slice();
+    gorunen = kaynak.filter(function (m) {
       if (!kel.length) return true;
       var ad = trKucuk(m.ad);
       return kel.some(function (k) { return ad.indexOf(k) >= 0; });
     });
+    // seçili kayıt listede yoksa ilk kayıt seçili gelir
+    if (!gorunen.some(function (m) { return m.id === seciliId; })) seciliId = gorunen.length ? gorunen[0].id : null;
+
     var tb = $('tanimBody'); tb.innerHTML = '';
     var bos = $('tanimEmpty');
-    bos.classList.toggle('hidden', liste.length > 0);
+    bos.classList.toggle('hidden', gorunen.length > 0);
     bos.innerHTML = markalar.length ? 'Aramaya uyan marka bulunamadı.' : 'Henüz marka yok.<br>“Marka Ekle” ile ekleyebilirsiniz.';
-    liste.forEach(function (m) {
+    gorunen.forEach(function (m, i) {
       var tr = document.createElement('tr');
+      tr.dataset.id = m.id;
+      var secili = m.id === seciliId, butonlar = '';
+      if (secili) {
+        tr.className = 'selected';
+        // butonlar yalnız seçili satırda; taşıma yalnız kayıt sırasındayken
+        if (sira === 'kayit') butonlar += ikonBtn('icon-btn', 'up', ICO.up, 'Yukarı taşı', i === 0) +
+          ikonBtn('icon-btn', 'down', ICO.down, 'Aşağı taşı', i === gorunen.length - 1);
+        butonlar += ikonBtn('icon-btn', 'edit', ICO.edit, 'Markayı düzenle') + ikonBtn('icon-btn del', 'del', ICO.x, 'Markayı sil');
+      }
       tr.innerHTML = '<td><span class="fit"><span class="pname' + (m.pasif ? ' pasif' : '') + '">' + esc(m.ad) + '</span>' +
-        (m.pasif ? '<span class="pasiftag">(PASİF)</span>' : '') + '</span></td>';
-      satirEtkilesim(tr, function (r, x, y) {
-        menuAc(x, y, function () {
-          onay('Marka Sil', '“' + m.ad + '” silinsin mi?', function () {
-            markalar = markalar.filter(function (q) { return q.id !== m.id; });
-            silinen.push({ id: uid(), zaman: new Date().toISOString(), ad: m.ad, pasif: !!m.pasif });
-            kaydetMarka(); kaydetSilinen(); renderTanim(); toast('Marka silindi ve arşive alındı.');
-          });
-        }, {
-          yazi: m.pasif ? 'Aktif Yap' : 'Pasif Yap',
-          fn: function () {
-            m.pasif = !m.pasif;
-            kaydetMarka(); renderTanim();
-            toast('“' + m.ad + '” ' + (m.pasif ? 'pasif yapıldı.' : 'aktif yapıldı.'));
-          }
-        });
-      }, function () { markaDialog(m); });
+        (m.pasif ? '<span class="pasiftag">(PASİF)</span>' : '') + '</span></td><td class="act">' + butonlar + '</td>';
       tb.appendChild(tr);
     });
     sigdir(tb);
   }
+
+  function seciliSatiriGoster() {
+    var tr = $('tanimBody').querySelector('tr.selected');
+    if (tr) tr.scrollIntoView({ block: 'nearest' });
+  }
+  function bul(id) { for (var i = 0; i < markalar.length; i++) if (markalar[i].id === id) return markalar[i]; return null; }
+
+  function markaSil(m) {
+    onay('Marka Sil', '“' + m.ad + '” silinsin mi?', function () {
+      var i = gorunen.indexOf(m);
+      markalar = markalar.filter(function (q) { return q.id !== m.id; });
+      silinen.push({ id: uid(), zaman: new Date().toISOString(), ad: m.ad, pasif: !!m.pasif });
+      // silinenin yerine bir önceki (yoksa sonraki) satır seçili kalır
+      var kalan = gorunen.filter(function (q) { return q !== m; });
+      seciliId = kalan.length ? kalan[Math.max(0, i - 1)].id : null;
+      kaydetMarka(); kaydetSilinen(); renderTanim(); toast('Marka silindi ve arşive alındı.');
+    });
+  }
+  function pasifDegistir(m) {
+    m.pasif = !m.pasif;
+    kaydetMarka(); renderTanim();
+    toast('“' + m.ad + '” ' + (m.pasif ? 'pasif yapıldı.' : 'aktif yapıldı.'));
+  }
+  // Kayıt sırasında taşır: görünen listedeki komşusuyla yer değiştirir (arama varken de doğru çalışır)
+  function markaTasi(m, yon) {
+    if (sira !== 'kayit') return;
+    var komsu = gorunen[gorunen.indexOf(m) + yon];
+    if (!komsu) return;
+    var a = markalar.indexOf(m), b = markalar.indexOf(komsu);
+    markalar[a] = komsu; markalar[b] = m;
+    kaydetMarka(); renderTanim(); seciliSatiriGoster();
+  }
+
+  function sec(id) { if (seciliId !== id) { seciliId = id; renderTanim(); } }
+
+  // Dokunma: seç. Çift dokunma: düzenle. Basılı tutma: seç + menü. Simgeler: taşı / düzenle / sil.
+  (function () {
+    var tb = $('tanimBody'), son = { id: null, t: 0 }, timer = null, uzun = false, sx = 0, sy = 0;
+    tb.addEventListener('click', function (e) {
+      var tr = e.target.closest('tr[data-id]'); if (!tr) return;
+      if (uzun) { uzun = false; return; }
+      var m = bul(tr.dataset.id); if (!m) return;
+      var btn = e.target.closest('[data-act]');
+      if (btn) {
+        son = { id: null, t: 0 };
+        var act = btn.dataset.act;
+        if (act === 'del') markaSil(m);
+        else if (act === 'edit') markaDialog(m);
+        else markaTasi(m, act === 'up' ? -1 : 1);
+        return;
+      }
+      sec(m.id);
+      var t = Date.now(), cift = son.id === m.id && t - son.t < 450;
+      son = cift ? { id: null, t: 0 } : { id: m.id, t: t };
+      if (cift) markaDialog(m);
+    });
+    tb.addEventListener('pointerdown', function (e) {
+      var tr = e.target.closest('tr[data-id]');
+      if (!tr || e.target.closest('[data-act]') || (e.button && e.button !== 0)) return;
+      uzun = false; sx = e.clientX; sy = e.clientY;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var m = bul(tr.dataset.id); if (!m) return;
+        uzun = true; sec(m.id);
+        if (navigator.vibrate) navigator.vibrate(30);
+        menuAc(sx, sy, function () { markaSil(m); }, { yazi: m.pasif ? 'Aktif Yap' : 'Pasif Yap', fn: function () { pasifDegistir(m); } });
+      }, 550);
+    });
+    tb.addEventListener('pointermove', function (e) { if (Math.abs(e.clientX - sx) > 10 || Math.abs(e.clientY - sy) > 10) clearTimeout(timer); });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) { tb.addEventListener(ev, function () { clearTimeout(timer); }); });
+    tb.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  })();
+
+  $('sirala').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-sira]');
+    if (!b || b.dataset.sira === sira) return;
+    sira = b.dataset.sira;
+    renderTanim(); seciliSatiriGoster();
+  });
 
   var duzenlenen = null;
   function markaDialog(m) {
@@ -281,9 +386,9 @@
     var ayni = markalar.some(function (q) { return q !== duzenlenen && trKucuk(q.ad) === trKucuk(ad); });
     if (ayni) { $('dlgMarkaErr').textContent = 'Bu isimde bir marka zaten var.'; return; }
     var pasif = $('inpPasif').checked;
-    if (duzenlenen) { duzenlenen.ad = ad; duzenlenen.pasif = pasif; }
-    else markalar.push({ id: uid(), ad: ad, pasif: pasif });
-    kaydetMarka(); dialogKapat('dlgMarka'); renderTanim();
+    if (duzenlenen) { duzenlenen.ad = ad; duzenlenen.pasif = pasif; seciliId = duzenlenen.id; }
+    else { var y = { id: uid(), ad: ad, pasif: pasif }; markalar.push(y); seciliId = y.id; }
+    kaydetMarka(); dialogKapat('dlgMarka'); renderTanim(); seciliSatiriGoster();
   }
   $('btnMarkaKaydet').addEventListener('click', markaKaydet);
   $('inpAd').addEventListener('keydown', function (e) { if (e.key === 'Enter') markaKaydet(); });

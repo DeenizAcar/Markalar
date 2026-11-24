@@ -1,6 +1,6 @@
 :root{
   --bg:#eef2f6; --panel:#1f4e79; --panel-fg:#fff; --card:#fff; --line:#d5dde6;
-  --text:#1b2430; --muted:#6b7785; --accent:#1f6fb5; --danger:#c62828; --sel:#cfe3fb;
+  --text:#1b2430; --muted:#6b7785; --accent:#1f6fb5; --danger:#c62828; --sel:#fff3c4; --icon:#111;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;}
@@ -90,4 +90,31 @@ select,input,textarea{font:inherit;color:var(--text)}
   #scrTanim .bottombar .btn{padding:8px 7px;font-size:13px}
   #scrTanim .xlicon,#scrTanim .kasaicon{width:16px;height:16px}
   .xlbtn{gap:4px}
+}
+
+/* Seçili satır sarı ve kalın */
+.grid tbody tr.selected td{font-weight:700}
+
+/* Tablo başlığında sıralama seçimi */
+.th-flex{display:flex;align-items:center;gap:10px;min-width:0}
+.seg{display:inline-flex;border:1px solid #9fb0c2;border-radius:6px;overflow:hidden;flex:none}
+.seg-btn{height:22px;padding:0 8px;border:0;background:#fff;color:#33404e;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.seg-btn+.seg-btn{border-left:1px solid #9fb0c2}
+.seg-btn.on{background:var(--panel);color:#fff;font-weight:700}
+
+/* Satır simgeleri: yalnız seçili satırda; silme kırmızı, diğerleri siyah */
+.grid th.act,.grid td.act{width:100px;padding:0 4px;text-align:right;white-space:nowrap}
+.icon-btn{width:24px;height:26px;border:0;border-radius:5px;background:transparent;color:var(--icon);cursor:pointer;padding:0;vertical-align:middle}
+.icon-btn .ico{width:15px;height:15px;display:block;margin:auto}
+.icon-btn.del{color:var(--danger)}
+.icon-btn:hover:not(:disabled){background:rgba(0,0,0,.08)}
+.icon-btn.del:hover{background:rgba(198,40,40,.12)}
+.icon-btn:disabled{opacity:.25;cursor:default}
+.icon-btn:not(:disabled):active{filter:brightness(.85)}
+#tanimBody tr{cursor:pointer}
+
+@media (max-width:480px){
+  .th-flex{gap:6px}
+  .seg-btn{padding:0 5px;font-size:11px}
+  .grid th.act,.grid td.act{width:96px;padding:0 2px}
 }
