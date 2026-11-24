@@ -103,7 +103,9 @@ select,input,textarea{font:inherit;color:var(--text)}
 .seg-btn.on{background:var(--panel);color:#fff;font-weight:700}
 
 /* Satır simgeleri: yalnız seçili satırda; silme kırmızı, diğerleri siyah */
-.grid th.act,.grid td.act{width:100px;padding:0 4px;text-align:right;white-space:nowrap}
+.c-act{width:100px}
+.grid td.act{padding:0 4px;text-align:right;white-space:nowrap}
+.siralabel{margin-left:auto;white-space:nowrap}
 .icon-btn{width:24px;height:26px;border:0;border-radius:5px;background:transparent;color:var(--icon);cursor:pointer;padding:0;vertical-align:middle}
 .icon-btn .ico{width:15px;height:15px;display:block;margin:auto}
 .icon-btn.del{color:var(--danger)}
@@ -116,5 +118,6 @@ select,input,textarea{font:inherit;color:var(--text)}
 @media (max-width:480px){
   .th-flex{gap:6px}
   .seg-btn{padding:0 5px;font-size:11px}
-  .grid th.act,.grid td.act{width:96px;padding:0 2px}
+  .c-act{width:96px}
+  .grid td.act{padding:0 2px}
 }

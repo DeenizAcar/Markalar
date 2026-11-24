@@ -24,17 +24,18 @@
   </header>
   <div class="tablewrap">
     <table class="grid">
+      <colgroup><col><col class="c-act"></colgroup>
       <thead><tr>
-        <th>
+        <th colspan="2">
           <div class="th-flex">
             <span>Marka İsmi</span>
+            <span class="siralabel">Sıralama :</span>
             <div class="seg" id="sirala" role="radiogroup" aria-label="Sıralama">
               <button type="button" class="seg-btn" data-sira="kayit" role="radio" title="Eklenme sırası; yukarı / aşağı taşınabilir">Kayıt Sırasına Göre</button>
               <button type="button" class="seg-btn" data-sira="ad" role="radio" title="Ada göre sıralı; taşıma yapılamaz">Ada Göre</button>
             </div>
           </div>
         </th>
-        <th class="act"></th>
       </tr></thead>
       <tbody id="tanimBody"></tbody>
     </table>
