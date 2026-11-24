@@ -20,3 +20,6 @@ Saf HTML/CSS/JS (`www/`), Capacitor 7 ile Android'e paketlenir. Veriler cihazda 
 İmza için repo'da `DEBUG_KEYSTORE_B64` secret'ı gerekir (paket kimliği: `com.deenizacar.markalar`).
 
 Yerelde: `npm run serve` → http://localhost:5173
+
+## Sipariş Hazırlama ile paylaşım
+Android uygulamasında markalar, [Sipariş Hazırlama](https://deenizacar.github.io/siparishazirlama/) uygulamasıyla paylaşılır. `www/paylas.js` markaları Preferences'a da yazar; CI'da `native/kur.mjs` Android projesine sadece Sipariş Hazırlama'nın okuyabildiği `VeriPaylasim` sağlayıcısını ekler.

@@ -36,6 +36,8 @@ jobs:
       - name: Android projesi oluştur
         run: |
           npx cap add android
+          # Sipariş Hazırlama ile veri paylaşımı (native/kur.mjs)
+          node native/kur.mjs com.deenizacar.markalar mk_marka
           npx capacitor-assets generate --android --iconBackgroundColor '#1f4e79' --splashBackgroundColor '#1f4e79' || echo "ikon üretimi atlandı"
           npx cap sync android
           # her yayında sürüm artar: 1.0.<derleme no>
